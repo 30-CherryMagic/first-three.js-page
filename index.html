@@ -31,8 +31,9 @@
       letter-spacing: 5px;
       color: #fff;
     }
-    button{
+    .btn{
       display: block;
+      margin: 0;
       border: 0px;
       border-radius: 5px;
       overflow: hidden;
@@ -53,12 +54,12 @@
       background-color: #e74032;
       color: #fff;
     }
-    p{
+    #hint{
       display: block;
       position: absolute;
       padding: 0;
       margin: 0;
-      top: 50%;
+      top: 30%;
       left: 50%;
       transform: translate(-50%,-50%);
       font-family: 'Tilt Neon', cursive;
@@ -74,22 +75,51 @@
       50%{opacity: 1;}
       100%{opacity: 0;}
     }
+    @media screen and (max-width: 520px){
+      body{
+        background-color: #222222;
+      }
+      header{
+        padding: 15px 0;
+        display: block;
+        width: 100vw;
+      }
+      h1{
+        font-size: 24px;
+        text-align: center;
+        margin-bottom: 15px;
+      }
+      .btn{
+        width: 180px;
+        margin: auto;
+      }
+      a{
+        font-size: 14px;
+        text-align: center;
+      }
+      #hint{
+        font-size: 20px;
+      }
+      canvas{
+        margin-top: 30px;
+      }
+    }
   </style>
 </head>
 <body>
   <header>
     <h1>3D APPLE</h1>
-    <button><a href="anApple.html">another apple</a></button>
+    <p class="btn"><a href="anApple.html">another apple</a></p class="btn">
   </header>
-  <p id="tigger">Drag to move</p>
+  <p id="hint">Drag to move</p>
   <!-- <script async src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script> -->
   <canvas id="myCanvas"></canvas>
   <script type="module">
     const myCanvas = document.getElementById('myCanvas');
-    const tigger = document.getElementById('tigger');
+    const hint = document.getElementById('hint');
     myCanvas.addEventListener('click',()=> {
-      tigger.style.opacity = 0 ;
-      tigger.style.animationIterationCount = 0;
+      hint.style.opacity = 0 ;
+      hint.style.animationIterationCount = 0;
     } )
     //https://discourse.threejs.org/t/gltfloader-not-working/19882
     import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.121.1/build/three.module.js';
@@ -175,8 +205,8 @@
         console.error( error );
       } );
 
-        const planeGeometry = new THREE.PlaneGeometry(10, 10);
-        const planeMaterial = new THREE.MeshStandardMaterial({color: 0xcccccc, side: THREE.DoubleSide});
+        const planeGeometry = new THREE.PlaneGeometry(10, 5);
+        const planeMaterial = new THREE.MeshStandardMaterial({color: 0x666666, side: THREE.DoubleSide});
         const planeMesh = new THREE.Mesh(planeGeometry, planeMaterial);
 
         planeMesh.rotation.x = -Math.PI / 2;
