@@ -7,9 +7,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Tilt+Neon&display=swap" rel="stylesheet">
-  <title>OrbitControls</title>
+  <title>mousemove</title>
   <style>
-    body { 
+     body { 
       margin: 0; 
       padding: 0;
       overflow: hidden;
@@ -25,7 +25,7 @@
       padding: 0;
       font-family: 'Tilt Neon', cursive;
       letter-spacing: 5px;
-      color: #fff;
+      color: #333;
     }
     button{
       display: block;
@@ -42,7 +42,7 @@
       display: block;
       text-decoration: none;
       transition: 0.4s;
-      background-color: #555;
+      background-color: #bbb;
       color: #fff;
     }
     a:hover{
@@ -54,9 +54,9 @@
 <body>
   <header>
     <h1>3D APPLE</h1>
-    <button><a href="anApple.html">another apple</a></button>
+    <button><a href="index.html">another apple</a></button>
   </header>
-  <!-- <script async src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script> -->
+  <script async src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script>
   <canvas id="myCanvas"></canvas>
   <script type="module">
     //https://discourse.threejs.org/t/gltfloader-not-working/19882
@@ -67,9 +67,6 @@
     import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.121.1/examples/jsm/loaders/GLTFLoader.js'
     console.log('GLTFLoader imported');
 
-    import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.121.1/examples/jsm/controls/OrbitControls.js'
-    console.log('OrbitControls imported');
-
     document.addEventListener('DOMContentLoaded', init);
     let 
       scene, 
@@ -77,6 +74,7 @@
       renderer, 
       controls,
       loader,
+      root,
       cursor;
 
     let size = {
@@ -86,39 +84,44 @@
 
     function init(){
 
-      //シーンを作る
+      //シーン
       scene = new THREE.Scene();
-      const backgroundColor = 0x222222;
+      const backgroundColor = 0xf1f1f1;
       scene.background = new THREE.Color(backgroundColor);
 
-      //レンダー器を作る
+      //レンダー器
       renderer = new THREE.WebGLRenderer({
         canvas: document.getElementById('myCanvas'),
-        antialias: true //アンチエイリアス
+        antialias: true, 
       });
       renderer.setSize( size.width, size.height );
-      //色味調整：https://liginc.co.jp/576599#
       renderer.physicallyCorrectLights = true;
       renderer.outputEncoding = THREE.sRGBEncoding;
       renderer.toneMapping = THREE.ACESFilmicToneMapping; 
       renderer.shadowMap.enabled = true;
 
-      //カメラを作る
+      //カメラ
       camera = 
       new THREE.PerspectiveCamera( 75 , size.width / size.height , 0.1 , 1000 );
       camera.position.set( 0 , 0 , 8 );
       scene.add(camera);
 
-      // カメラのAddon (コントロール)
-      // カメラを軌道上に移動させるためのコントロール
-      controls = new OrbitControls(camera, renderer.domElement);
+      //カーソルでカメラを移動する
+      //https://youtu.be/tVr89249gwM?t=2243
+      cursor = { x:0, y:0 };
+      window.addEventListener('mousemove',(event) => {
+        cursor.x = event.clientX / size.width -0.5; 
+        //normalize ( -0.5~+0.5 )
+        //カメラを中央（0のところ）をにする
+        cursor.y = event.clientY / size.height -0.5;
+      })
 
-      //ライトを作る
-      const ambientLight = new THREE.AmbientLight(0xffffff, 1);
+      //ライト
+      const ambientLight = new THREE.AmbientLight(0xffffff, 2);
       scene.add(ambientLight);
 
-      const directionalLight = new THREE.DirectionalLight(0xffffff, 4);
-      directionalLight.position.set( 0, 20, 20);
+      const directionalLight = new THREE.DirectionalLight(0xffffff, 5);
+      directionalLight.position.set( 0, 20, -5);
       directionalLight.castShadow = true;
       directionalLight.shadow.mapSize.width = 1024;
       directionalLight.shadow.mapSize.height = 1024;
@@ -128,42 +131,36 @@
       loader = new GLTFLoader();
       console.log("three dimension model loader:loader")
 
-      //アイテム:https://youtu.be/yPA2z7fl4J8
-      loader.load( 'apple.glb', function ( glb ) {
-        const root = glb.scene ;
+      //アイテム
+      
+      loader.load( 'anApple.glb', function ( glb ) {
+        root = glb.scene ;
         console.log(glb);
         console.log('3d model loaded');
         scene.add( root );
-        root.castShadow = true;
-        root.scale.set( 4 , 4 , 4 ); //モデルを拡大縮小
-        root.position.set( 0 , -1 , 0 ); //モデルの位置
+        root.recieveShadow = true;
+        root.scale.set( 2 , 2 , 2 ); 
+        root.position.set( 0 , 0 , 0 ); 
+        root.rotation.x = 0.6;
       }, function(xhr){
         console.log((xhr.loaded/xhr.total*100)+'% loaded');
       }, function ( error ) {
         console.error( error );
       } );
 
-        const planeGeometry = new THREE.PlaneGeometry(10, 10);
-        const planeMaterial = new THREE.MeshStandardMaterial({color: 0xcccccc, side: THREE.DoubleSide});
-        const planeMesh = new THREE.Mesh(planeGeometry, planeMaterial);
-
-        planeMesh.rotation.x = -Math.PI / 2;
-        planeMesh.position.y = -1.009;
-        planeMesh.receiveShadow = true;
-
-        scene.add(planeMesh);
-
-      //レンダリングループ
       function animate() {  
         requestAnimationFrame( animate );
-        //カメラの方向（コントロール）を更新
-        controls.update(); 
+        root.rotation.y += 0.002;
+        //カメラ位置を更新
+        const cameraX = cursor.x ; //offset of moving
+        const cameraY = cursor.y *-1; //three.jsのY軸↓は（-）、ブラウザののY軸↓は（+）のため
+        camera.position.x += ( cameraX-camera.position.x ) / 10; //エージング(数値が大きくなるほど遅くなる)
+        camera.position.y += ( cameraY-camera.position.y ) / 10; //毎回1/10の距離で移動する
         renderer.render( scene, camera );
       }
       animate();
     }
 
-    //ウインドウリサイズ：https://youtu.be/oAJNYQLexIQ?t=920
     function onWindowResize(){
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
