@@ -14,6 +14,10 @@
       padding: 0;
       overflow: hidden;
     }
+    @keyframes show{
+      0%{opacity: 0;}
+      100%{opacity: 1;}
+    }
     header{
       display: flex;
       position: absolute;
@@ -49,6 +53,27 @@
       background-color: #e74032;
       color: #fff;
     }
+    p{
+      display: block;
+      position: absolute;
+      padding: 0;
+      margin: 0;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%,-50%);
+      font-family: 'Tilt Neon', cursive;
+      color: #fff;
+      text-shadow: #333 0 0 10px;
+      font-size: 50px;
+      animation: showup 1.5s ease-in-out;
+      animation-iteration-count: infinite;
+      user-select:none;
+    }
+    @keyframes showup {
+      0%{opacity: 0;}
+      50%{opacity: 1;}
+      100%{opacity: 0;}
+    }
   </style>
 </head>
 <body>
@@ -56,9 +81,16 @@
     <h1>3D APPLE</h1>
     <button><a href="anApple.html">another apple</a></button>
   </header>
+  <p id="tigger">Drag to move</p>
   <!-- <script async src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script> -->
   <canvas id="myCanvas"></canvas>
   <script type="module">
+    const myCanvas = document.getElementById('myCanvas');
+    const tigger = document.getElementById('tigger');
+    myCanvas.addEventListener('click',()=> {
+      tigger.style.opacity = 0 ;
+      tigger.style.animationIterationCount = 0;
+    } )
     //https://discourse.threejs.org/t/gltfloader-not-working/19882
     import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.121.1/build/three.module.js';
     console.log(THREE);
