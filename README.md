@@ -1,8 +1,2 @@
 # my-first-three.js-page
-put Blender 3D model into webpage byThree.js
-
-I have no idea why it didn't show my model in github.
-but it works by AWS amplify (https://threejs.d2vp49erqes4r1.amplifyapp.com/).
-
-2023/02/24 23:28
-fixed the path and my model shows up.
+Used Blender to create a 3D model, then exported it as a .glb file, and finally used GLTFLoader(Three.js) to embed the model into a web page. 
